@@ -6,8 +6,6 @@ RUN go get github.com/oxequa/realize
 RUN go get github.com/dgrijalva/jwt-go
 
 ADD ./ /src/app
-ENV SERVICE_USER_URI https://muitsfriday-service-user.herokuapp.com
-
 
 WORKDIR /src/app
 

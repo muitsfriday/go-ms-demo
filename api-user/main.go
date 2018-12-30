@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/muitsfriday/go-ms-demo/api-user/consumers"
@@ -20,16 +22,19 @@ type UserLogin struct {
 
 func main() {
 
+	ss := strings.Split(os.Getenv("MONGODB_URI"), "/")
+	dbname := ss[len(ss)-1]
+
 	// init mongo collection.
-	var session, err = mgo.Dial("mongodb://mongodb")
+	var session, err = mgo.Dial(os.Getenv("MONGODB_URI"))
 	if err != nil {
 		panic("end")
 	}
 	defer session.Close()
 
 	// init dependentcy.
-	userCollection := session.DB("demo").C("user")
-	incrCollection := session.DB("demo").C("user_counter")
+	userCollection := session.DB(dbname).C("user")
+	incrCollection := session.DB(dbname).C("user_counter")
 
 	userRepo := repositories.New(userCollection, incrCollection)
 	articleRepo := repositories.NewRemoteArticleRepository()

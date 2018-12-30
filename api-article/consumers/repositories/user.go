@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/muitsfriday/go-ms-demo/api-article/consumers"
@@ -36,7 +37,7 @@ func (r *RemoteUserRepository) GetUser(id int) (consumers.User, error) {
 	var ur UserResponse
 	var u consumers.User
 
-	response, err := http.Get("http://api-user:8080/user/" + strconv.Itoa(id))
+	response, err := http.Get(os.Getenv("SERVICE_USER_URI") + "/user/" + strconv.Itoa(id))
 	if err != nil {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 		return u, errors.New("HTTP error")

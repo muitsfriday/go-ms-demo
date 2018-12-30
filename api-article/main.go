@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/muitsfriday/go-ms-demo/api-article/consumers"
@@ -13,16 +16,22 @@ import (
 
 func main() {
 
+	fmt.Println("go is running")
+
 	router := gin.Default()
 
-	var session, err = mgo.Dial("mongodb://mongodb")
+	ss := strings.Split(os.Getenv("MONGODB_URI"), "/")
+	dbname := ss[len(ss)-1]
+
+	var session, err = mgo.Dial(os.Getenv("MONGODB_URI"))
 	if err != nil {
+		fmt.Print(os.Getenv("MONGODB_URI"))
 		panic("end")
 	}
 	defer session.Close()
 
-	articleCollection := session.DB("demo").C("article")
-	incrCollection := session.DB("demo").C("article_counter")
+	articleCollection := session.DB(dbname).C("article")
+	incrCollection := session.DB(dbname).C("article_counter")
 	remoteUserRepo := repositories.NewUserRepository()
 	articleRepo := repositories.New(articleCollection, incrCollection)
 	articleService := services.NewArticleService(&articleRepo, &remoteUserRepo)

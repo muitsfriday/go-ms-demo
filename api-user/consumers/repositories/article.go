@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/muitsfriday/go-ms-demo/api-user/consumers"
@@ -32,14 +33,14 @@ func (ras *RemoteArticleRepository) GetArticleByOwnerID(id int, page int) ([]con
 	var ar ArticlesResponse
 	var articles []consumers.Article
 
-	response, err := http.Get("http://api-article:8081/user/" + strconv.Itoa(id) + "/articles")
+	response, err := http.Get(os.Getenv("SERVICE_ARTICLE_URI") + "/user/" + strconv.Itoa(id) + "/articles")
 	if err != nil {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 		return articles, errors.New("HTTP error")
 	}
 
 	data, _ := ioutil.ReadAll(response.Body)
-	fmt.Println("aaaaaa", string(data))
+	//fmt.Println("aaaaaa", string(data))
 	if err := json.Unmarshal(data, &ar); err != nil {
 		return articles, err
 	}
@@ -48,7 +49,7 @@ func (ras *RemoteArticleRepository) GetArticleByOwnerID(id int, page int) ([]con
 		return articles, errors.New("user not found")
 	}
 
-	fmt.Println("arararar xxxx", ar.Articles)
+	//fmt.Println("arararar xxxx", ar.Articles)
 
 	return ar.Articles, nil
 }
